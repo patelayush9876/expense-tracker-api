@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './providers/prisma/prisma.module';
 import { AppLoggerModule } from '@/common/logger/logger.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { AppLoggerModule } from '@/common/logger/logger.module';
     }),
     AppLoggerModule,
     PrismaModule,
+    UserModule,
+    AuthModule,
 
   ],
   controllers: [AppController],
