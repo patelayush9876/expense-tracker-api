@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { UserRepository } from './repositories/user.repository';
 
@@ -13,7 +17,9 @@ export class UserService {
     }
 
     if (data.username) {
-      const existingUsername = await this.userRepository.findByUsername(data.username);
+      const existingUsername = await this.userRepository.findByUsername(
+        data.username,
+      );
       if (existingUsername) {
         throw new ConflictException('A user with this username already exists');
       }
@@ -50,7 +56,9 @@ export class UserService {
     }
 
     if (data.username && typeof data.username === 'string') {
-      const existingUsername = await this.userRepository.findByUsername(data.username);
+      const existingUsername = await this.userRepository.findByUsername(
+        data.username,
+      );
       if (existingUsername && existingUsername.id !== id) {
         throw new ConflictException('A user with this username already exists');
       }
@@ -62,5 +70,18 @@ export class UserService {
   async remove(id: string): Promise<User> {
     await this.findById(id);
     return this.userRepository.delete(id);
+  }
+
+  async getSettings(userId: string) {
+    const settings = await this.userRepository.findSettings(userId);
+    if (!settings) {
+      throw new NotFoundException(`Settings for user ${userId} not found`);
+    }
+    return settings;
+  }
+
+  async updateSettings(userId: string, data: Prisma.UserSettingsUpdateInput) {
+    await this.findById(userId);
+    return this.userRepository.updateSettings(userId, data);
   }
 }

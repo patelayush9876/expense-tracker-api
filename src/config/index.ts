@@ -7,10 +7,10 @@ import { loggerConfig } from './logger.config';
 import { redisConfig } from './redis.config';
 
 export const config = {
-    app: appConfig,
-    auth: authConfig,
-    db: dbConfig,
-    cors: corsConfig,
-    redis: redisConfig,
-    logger: loggerConfig
+  app: appConfig,
+  auth: authConfig,
+  db: dbConfig,
+  cors: corsConfig,
+  redis: redisConfig,
+  logger: loggerConfig,
 } as const;

@@ -5,11 +5,7 @@ import { loggerConfig } from './logger.config';
 
 @Global()
 @Module({
-  imports: [
-    PinoLoggerModule.forRoot(loggerConfig),
-  ],
-  exports: [
-    PinoLoggerModule,
-  ],
+  imports: [PinoLoggerModule.forRoot(loggerConfig)],
+  exports: [PinoLoggerModule],
 })
 export class AppLoggerModule {}

@@ -8,25 +8,33 @@ export class UserRepository {
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        settings: {
+          create: {},
+        },
+      },
     });
   }
 
   async findById(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { id },
+      include: { settings: true },
     });
   }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { email },
+      include: { settings: true },
     });
   }
 
   async findByUsername(username: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { username },
+      include: { settings: true },
     });
   }
 
@@ -34,12 +42,26 @@ export class UserRepository {
     return this.prisma.user.update({
       where: { id },
       data,
+      include: { settings: true },
     });
   }
 
   async delete(id: string): Promise<User> {
     return this.prisma.user.delete({
       where: { id },
+    });
+  }
+
+  async findSettings(userId: string) {
+    return this.prisma.userSettings.findUnique({
+      where: { userId },
+    });
+  }
+
+  async updateSettings(userId: string, data: Prisma.UserSettingsUpdateInput) {
+    return this.prisma.userSettings.update({
+      where: { userId },
+      data,
     });
   }
 }

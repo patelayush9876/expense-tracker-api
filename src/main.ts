@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import helmet from 'helmet';
 import compression from 'compression';
@@ -25,6 +26,18 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  // Swagger setup
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Expense & Investment Tracker API')
+    .setDescription(
+      'Enterprise-grade backend API for tracking expenses, incomes, investments, and goals.',
+    )
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -48,24 +61,16 @@ async function bootstrap() {
   );
 
   const gracefulShutdown = async (signal: string) => {
-    logger.warn(
-      { signal },
-      'Shutdown signal received',
-    );
+    logger.warn({ signal }, 'Shutdown signal received');
 
     try {
       await app.close();
 
-      logger.log(
-        'Application closed successfully',
-      );
+      logger.log('Application closed successfully');
 
       process.exit(0);
     } catch (error) {
-      logger.error(
-        { error },
-        'Error during shutdown',
-      );
+      logger.error({ error }, 'Error during shutdown');
 
       process.exit(1);
     }
