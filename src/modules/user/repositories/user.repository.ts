@@ -13,6 +13,31 @@ export class UserRepository {
         settings: {
           create: {},
         },
+        expenseCategories: {
+          createMany: {
+            data: [
+              { name: 'Housing' },
+              { name: 'Groceries' },
+              { name: 'Food & Dining' },
+              { name: 'Shopping' },
+              { name: 'Transport' },
+              { name: 'Utilities' },
+              { name: 'Healthcare' },
+              { name: 'Entertainment' },
+              { name: 'Others' },
+            ],
+          },
+        },
+        incomeCategories: {
+          createMany: {
+            data: [
+              { name: 'Salary' },
+              { name: 'Freelance' },
+              { name: 'Investments' },
+              { name: 'Side Business' },
+            ],
+          },
+        },
       },
     });
   }

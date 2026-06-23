@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { UserRepository } from './repositories/user.repository';
+import { PrismaService } from '@/providers/prisma/prisma.service';
+import { RedisService } from '@/providers/redis/redis.service';
 
 describe('UserService', () => {
   let service: UserService;
@@ -18,6 +20,26 @@ describe('UserService', () => {
             create: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: PrismaService,
+          useValue: {
+            expense: { deleteMany: jest.fn(), createMany: jest.fn() },
+            income: { deleteMany: jest.fn(), createMany: jest.fn() },
+            investment: { deleteMany: jest.fn(), createMany: jest.fn() },
+            goal: { deleteMany: jest.fn(), createMany: jest.fn() },
+            notification: { deleteMany: jest.fn() },
+            activityLog: { deleteMany: jest.fn(), create: jest.fn() },
+            expenseCategory: { findMany: jest.fn(), createMany: jest.fn() },
+            incomeCategory: { findMany: jest.fn(), createMany: jest.fn() },
+            user: { findUnique: jest.fn() },
+          },
+        },
+        {
+          provide: RedisService,
+          useValue: {
+            delPattern: jest.fn(),
           },
         },
       ],

@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Delete,
   Body,
@@ -63,5 +64,12 @@ export class UserController {
     @Body() updateSettingsDto: UpdateSettingsDto,
   ) {
     return this.userService.updateSettings(user.id, updateSettingsDto);
+  }
+
+  @Post('seed')
+  @ApiOperation({ summary: 'Seed mock historical data for the user' })
+  async seedMockData(@CurrentUser() user: User): Promise<{ success: boolean }> {
+    await this.userService.seedMockData(user.id);
+    return { success: true };
   }
 }
