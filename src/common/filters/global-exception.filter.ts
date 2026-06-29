@@ -48,7 +48,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           break;
         default:
           status = HttpStatus.BAD_REQUEST;
-          message = 'Database constraint error';
+          message = `Database error (${exception.code}): ${exception.message}`;
           break;
       }
     } else if (exception instanceof Error) {
