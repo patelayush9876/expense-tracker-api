@@ -31,7 +31,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
@@ -50,15 +50,18 @@ export class AuthController {
 
     res.cookie('access_token', result.accessToken, {
       httpOnly: true,
-      secure: config.app.environment === 'production',
-      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
+      secure: config.app.environment === 'development',
+      sameSite: config.app.environment === 'development' ? 'none' : 'lax',
+      // sameSite: config.app.environment === 'production' ? 'none' : 'lax',
+
       maxAge: parseDurationToMs(config.auth.accessTokenExpiry),
     });
 
     res.cookie('refresh_token', result.refreshToken, {
       httpOnly: true,
-      secure: config.app.environment === 'production',
-      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
+      secure: config.app.environment === 'development',
+      sameSite: config.app.environment === 'development' ? 'none' : 'lax',
+      // sameSite: config.app.environment === 'production' ? 'none' : 'lax',
       maxAge: parseDurationToMs(config.auth.refreshTokenExpiry),
     });
 
