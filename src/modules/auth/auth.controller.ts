@@ -51,14 +51,14 @@ export class AuthController {
     res.cookie('access_token', result.accessToken, {
       httpOnly: true,
       secure: config.app.environment === 'production',
-      sameSite: 'lax',
+      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
       maxAge: parseDurationToMs(config.auth.accessTokenExpiry),
     });
 
     res.cookie('refresh_token', result.refreshToken, {
       httpOnly: true,
       secure: config.app.environment === 'production',
-      sameSite: 'lax',
+      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
       maxAge: parseDurationToMs(config.auth.refreshTokenExpiry),
     });
 
@@ -80,13 +80,13 @@ export class AuthController {
     res.clearCookie('access_token', {
       httpOnly: true,
       secure: config.app.environment === 'production',
-      sameSite: 'lax',
+      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
     });
 
     res.clearCookie('refresh_token', {
       httpOnly: true,
       secure: config.app.environment === 'production',
-      sameSite: 'lax',
+      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
     });
 
     return { success: true };
@@ -109,14 +109,14 @@ export class AuthController {
     res.cookie('access_token', result.accessToken, {
       httpOnly: true,
       secure: config.app.environment === 'production',
-      sameSite: 'lax',
+      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
       maxAge: parseDurationToMs(config.auth.accessTokenExpiry),
     });
 
     res.cookie('refresh_token', result.refreshToken, {
       httpOnly: true,
       secure: config.app.environment === 'production',
-      sameSite: 'lax',
+      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
       maxAge: parseDurationToMs(config.auth.refreshTokenExpiry),
     });
 
