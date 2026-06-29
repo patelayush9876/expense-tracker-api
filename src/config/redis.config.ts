@@ -1,9 +1,11 @@
 import { getEnv } from './env';
 
 export const redisConfig = {
-  host: getEnv('REDIS_HOST'),
+  url: getEnv('UPSTASH_REDIS_REST_URL'),
+  token: getEnv('UPSTASH_REDIS_REST_TOKEN'),
 
-  port: Number(getEnv('REDIS_PORT')),
-
-  db: Number(getEnv('REDIS_DB')),
+  // Reserved for local development (optional, no validation)
+  host: process.env.REDIS_HOST ?? 'localhost',
+  port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
+  db: process.env.REDIS_DB ? Number(process.env.REDIS_DB) : 0,
 };

@@ -5,6 +5,7 @@ export const redisClient = new Redis({
   host: config.redis.host,
   port: config.redis.port,
   db: config.redis.db,
+  lazyConnect: true, // Prevents automatic connection during startup since it is currently unused
 });
 
 redisClient.on('connect', () => {

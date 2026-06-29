@@ -1,42 +1,47 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { redisClient } from './redis.client';
+import { UpstashRedisService } from '@/common/redis/upstash-redis.service';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
-  private readonly client = redisClient;
+  constructor(private readonly upstashRedisService: UpstashRedisService) {}
 
   async get(key: string): Promise<string | null> {
-    return this.client.get(key);
+    return this.upstashRedisService.get(key);
   }
 
   async set(key: string, value: string, expirySeconds?: number): Promise<void> {
-    if (expirySeconds) {
-      await this.client.set(key, value, 'EX', expirySeconds);
-    } else {
-      await this.client.set(key, value);
-    }
+    await this.upstashRedisService.set(key, value, expirySeconds);
   }
 
   async del(key: string): Promise<void> {
-    await this.client.del(key);
+    await this.upstashRedisService.del(key);
   }
 
   async delPattern(pattern: string): Promise<void> {
-    const keys = await this.client.keys(pattern);
-    if (keys.length > 0) {
-      await this.client.del(...keys);
-    }
+    await this.upstashRedisService.delPattern(pattern);
   }
 
   async incr(key: string): Promise<number> {
-    return this.client.incr(key);
+    return this.upstashRedisService.incr(key);
   }
 
   async expire(key: string, seconds: number): Promise<number> {
-    return this.client.expire(key, seconds);
+    return this.upstashRedisService.expire(key, seconds);
+  }
+
+  async exists(key: string): Promise<number> {
+    return this.upstashRedisService.exists(key);
+  }
+
+  async ttl(key: string): Promise<number> {
+    return this.upstashRedisService.ttl(key);
+  }
+
+  async decr(key: string): Promise<number> {
+    return this.upstashRedisService.decr(key);
   }
 
   async onModuleDestroy() {
-    await this.client.quit();
+    // Upstash Redis uses REST API and is stateless; no connection to close.
   }
 }

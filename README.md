@@ -57,15 +57,38 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Deployment
+## Deployment & Infrastructure
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+This project is configured to support two environments:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 1. Development (Future/Local)
+For local development, you can run PostgreSQL and Redis using Docker Compose:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Start local PostgreSQL and Redis
+$ docker-compose up -d
+```
+When running locally, configure your `.env` file with the following variables:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/expense_tracker"
+# Local Redis (if you switch back to LocalRedisService)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+```
+
+### 2. Production
+In production, the application is configured to connect to cloud-hosted serverless providers:
+- **Database**: [Neon PostgreSQL](https://neon.tech/)
+- **Cache / Rate Limiting**: [Upstash Redis](https://upstash.com/) (accessed via REST API)
+
+Ensure the following environment variables are configured in your production environment:
+```env
+# Neon PostgreSQL Connection URL
+DATABASE_URL="postgresql://[user]:[password]@[neon-hostname]/expense_tracker?sslmode=require"
+
+# Upstash Redis REST API Configuration
+UPSTASH_REDIS_REST_URL="https://[your-database].upstash.io"
+UPSTASH_REDIS_REST_TOKEN="[your-token]"
 ```
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
