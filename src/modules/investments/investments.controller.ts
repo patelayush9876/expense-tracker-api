@@ -31,6 +31,12 @@ export class InvestmentsController {
     return this.service.create(user.id, dto);
   }
 
+  @Post('sync-prices')
+  @ApiOperation({ summary: 'Sync real-time stock, crypto, and mutual fund values' })
+  async syncPrices(@CurrentUser() user: User) {
+    return this.service.syncPrices(user.id);
+  }
+
   @Get('summary')
   @ApiOperation({
     summary: 'Get summary of all user investments (totals, P/L)',

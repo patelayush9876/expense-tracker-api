@@ -17,4 +17,11 @@ export class UpdateSettingsDto {
   @IsOptional()
   @IsBoolean()
   notificationsEnabled?: boolean;
+
+  @ApiPropertyOptional({ default: 'Starter' })
+  @IsOptional()
+  @IsString()
+  @IsIn(['Starter', 'Pro', 'Family'])
+  subscriptionPlan?: string;
 }
+

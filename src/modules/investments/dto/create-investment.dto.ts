@@ -38,5 +38,16 @@ export class CreateInvestmentDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  symbol?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @Min(0.0001)
+  quantity?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   notes?: string;
 }
