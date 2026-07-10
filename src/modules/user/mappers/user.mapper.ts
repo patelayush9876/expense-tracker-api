@@ -7,6 +7,7 @@ export class UserResponseDto {
   email: string;
   username: string | null;
   isEmailVerified: boolean;
+  role: string;
   settings?: {
     id: string;
     userId: string;
@@ -30,6 +31,7 @@ export class UserMapper {
       email: user.email,
       username: user.username,
       isEmailVerified: user.isEmailVerified,
+      role: user.role,
       settings: user.settings
         ? {
             id: user.settings.id,

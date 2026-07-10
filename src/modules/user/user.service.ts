@@ -353,4 +353,55 @@ export class UserService {
     await this.redisService.delPattern(`dashboard:*:${userId}`);
     await this.redisService.delPattern(`analytics:*:${userId}`);
   }
+
+  async findAllUsers(): Promise<User[]> {
+    return this.userRepository.findAllUsers();
+  }
+
+  async updateRole(id: string, role: string): Promise<User> {
+    const user = await this.findById(id);
+    if (user.role === role) return user;
+    return this.userRepository.updateRole(id, role);
+  }
+
+  async getAdminStats() {
+    const totalUsers = await this.prisma.user.count();
+    
+    const settings = await this.prisma.userSettings.groupBy({
+      by: ['subscriptionPlan'],
+      _count: {
+        _all: true,
+      },
+    });
+
+    const subscriptions = {
+      Free: 0,
+      Pro: 0,
+      Family: 0,
+    };
+    settings.forEach((s) => {
+      const plan = s.subscriptionPlan || 'Free';
+      if (plan in subscriptions) {
+        subscriptions[plan] = s._count._all;
+      }
+    });
+
+    const totalExpenses = await this.prisma.expense.count();
+    const totalIncomes = await this.prisma.income.count();
+    const totalTransactions = totalExpenses + totalIncomes;
+
+    const investments = await this.prisma.investment.aggregate({
+      _sum: {
+        currentValue: true,
+      },
+    });
+    const totalAssetValue = Number(investments._sum.currentValue || 0);
+
+    return {
+      totalUsers,
+      subscriptions,
+      totalTransactions,
+      totalAssetValue,
+    };
+  }
 }

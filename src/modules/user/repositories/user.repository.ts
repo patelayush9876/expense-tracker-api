@@ -89,4 +89,29 @@ export class UserRepository {
       data,
     });
   }
+
+  async findAllUsers() {
+    return this.prisma.user.findMany({
+      include: {
+        settings: true,
+        _count: {
+          select: {
+            expenses: true,
+            incomes: true,
+            investments: true,
+            goals: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async updateRole(id: string, role: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: { role },
+      include: { settings: true },
+    });
+  }
 }
