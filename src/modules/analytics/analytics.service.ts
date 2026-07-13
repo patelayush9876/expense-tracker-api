@@ -49,13 +49,14 @@ export class AnalyticsService {
 
         const [currentExpenses, prevExpenses] = await Promise.all([
           this.prisma.expense.aggregate({
-            where: { userId, expenseDate: { gte: currentMonthStart } },
+            where: { userId, expenseDate: { gte: currentMonthStart }, excludeFromAnalytics: false },
             _sum: { amount: true },
           }),
           this.prisma.expense.aggregate({
             where: {
               userId,
               expenseDate: { gte: prevMonthStart, lte: prevMonthEnd },
+              excludeFromAnalytics: false,
             },
             _sum: { amount: true },
           }),
@@ -135,7 +136,7 @@ export class AnalyticsService {
         );
 
         const expenses = await this.prisma.expense.findMany({
-          where: { userId, expenseDate: { gte: currentMonthStart } },
+          where: { userId, expenseDate: { gte: currentMonthStart }, excludeFromAnalytics: false },
           include: { category: true },
         });
 
@@ -182,7 +183,7 @@ export class AnalyticsService {
               _sum: { amount: true },
             }),
             this.prisma.expense.aggregate({
-              where: { userId, expenseDate: { gte: start, lte: end } },
+              where: { userId, expenseDate: { gte: start, lte: end }, excludeFromAnalytics: false },
               _sum: { amount: true },
             }),
           ]);

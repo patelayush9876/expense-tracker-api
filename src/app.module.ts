@@ -21,6 +21,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { ActivityLogsModule } from './modules/activity-logs/activity-logs.module';
+import { CreditCardsModule } from './modules/credit-cards/credit-cards.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ActivityLogsModule } from './modules/activity-logs/activity-logs.module
     AnalyticsModule,
     NotificationsModule,
     ActivityLogsModule,
+    CreditCardsModule,
   ],
   controllers: [AppController],
   providers: [

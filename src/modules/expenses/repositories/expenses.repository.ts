@@ -62,7 +62,7 @@ export class ExpensesRepository {
         skip,
         take: limit,
         orderBy,
-        include: { category: true },
+        include: { category: true, creditCard: true },
       }),
       this.prisma.expense.count({ where }),
     ]);
@@ -79,7 +79,7 @@ export class ExpensesRepository {
   async findById(id: string): Promise<Expense | null> {
     return this.prisma.expense.findUnique({
       where: { id },
-      include: { category: true },
+      include: { category: true, creditCard: true },
     });
   }
 

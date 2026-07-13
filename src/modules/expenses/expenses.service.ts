@@ -78,6 +78,8 @@ export class ExpensesService {
       categoryId: dto.categoryId,
       expenseDate: dto.expenseDate ? new Date(dto.expenseDate) : undefined,
       receiptUrl: dto.receiptUrl,
+      creditCardId: dto.creditCardId,
+      excludeFromAnalytics: dto.excludeFromAnalytics,
     });
 
     await this.redisService.delPattern(`dashboard:*:${userId}`);
@@ -125,7 +127,11 @@ export class ExpensesService {
         _sum: { amount: true },
       }),
       this.prisma.expense.aggregate({
-        where: { userId, expenseDate: { gte: startOfMonth, lte: endOfMonth } },
+        where: {
+          userId,
+          expenseDate: { gte: startOfMonth, lte: endOfMonth },
+          excludeFromAnalytics: false,
+        },
         _sum: { amount: true },
       }),
     ]);

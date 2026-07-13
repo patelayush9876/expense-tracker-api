@@ -3,49 +3,43 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsDateString,
-  IsUUID,
-  IsBoolean,
   Min,
+  Max,
+  Length,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateExpenseDto {
+export class CreateCreditCardDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  title: string;
+  name: string;
 
   @ApiProperty()
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0.01)
-  amount: number;
+  limit: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @Min(1)
+  @Max(31)
+  dueDate: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @Min(1)
+  @Max(31)
+  billingDate: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  description?: string;
-
-  @ApiProperty()
-  @IsUUID()
-  categoryId: string;
-
-  @ApiProperty()
-  @IsDateString()
-  expenseDate: string;
+  @Length(4, 4)
+  last4?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  receiptUrl?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsUUID()
-  creditCardId?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsBoolean()
-  excludeFromAnalytics?: boolean;
+  network?: string;
 }

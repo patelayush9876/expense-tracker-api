@@ -38,6 +38,7 @@ model User {
   settings          UserSettings?
   expenseCategories ExpenseCategory[]
   incomeCategories  IncomeCategory[]
+  creditCards       CreditCard[]
 
   @@map("users")
 }
@@ -89,13 +90,14 @@ model Expense {
 
   receiptUrl String?
 
-  categoryId String
+  categoryId           String
+  userId               String
+  creditCardId         String?
+  excludeFromAnalytics Boolean @default(false)
 
-  userId String
-
-  category ExpenseCategory @relation(fields: [categoryId], references: [id])
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   ExpenseCategory @relation(fields: [categoryId], references: [id])
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creditCard CreditCard?     @relation(fields: [creditCardId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,6 +105,7 @@ model Expense {
   @@index([userId])
   @@index([categoryId])
   @@index([expenseDate])
+  @@index([creditCardId])
   @@map("expenses")
 }
 
@@ -266,4 +269,22 @@ enum InvestmentType {
   CRYPTO
   PPF
   NPS
+}
+
+model CreditCard {
+  id          String   @id @default(uuid())
+  name        String
+  limit       Decimal  @db.Decimal(12, 2)
+  dueDate     Int
+  billingDate Int
+  last4       String?
+  network     String   @default("VISA")
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses    Expense[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("credit_cards")
 }

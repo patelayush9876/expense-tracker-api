@@ -48,7 +48,7 @@ export class DashboardService {
           _sum: { amount: true },
         }),
         this.prisma.expense.aggregate({
-          where: { userId },
+          where: { userId, excludeFromAnalytics: false },
           _sum: { amount: true },
         }),
         this.prisma.income.aggregate({
@@ -59,6 +59,7 @@ export class DashboardService {
           where: {
             userId,
             expenseDate: { gte: startOfMonth, lte: endOfMonth },
+            excludeFromAnalytics: false,
           },
           _sum: { amount: true },
         }),
@@ -104,7 +105,7 @@ export class DashboardService {
             select: { amount: true, incomeDate: true },
           }),
           this.prisma.expense.findMany({
-            where: { userId, expenseDate: { gte: sixMonthsAgo } },
+            where: { userId, expenseDate: { gte: sixMonthsAgo }, excludeFromAnalytics: false },
             select: { amount: true, expenseDate: true },
           }),
         ]);
@@ -153,7 +154,7 @@ export class DashboardService {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
         const expenses = await this.prisma.expense.findMany({
-          where: { userId, expenseDate: { gte: startOfMonth } },
+          where: { userId, expenseDate: { gte: startOfMonth }, excludeFromAnalytics: false },
           include: { category: true },
         });
 
@@ -194,7 +195,7 @@ export class DashboardService {
           select: { amount: true, incomeDate: true },
         }),
         this.prisma.expense.findMany({
-          where: { userId, expenseDate: { gte: twelveMonthsAgo } },
+          where: { userId, expenseDate: { gte: twelveMonthsAgo }, excludeFromAnalytics: false },
           select: { amount: true, expenseDate: true },
         }),
       ]);
