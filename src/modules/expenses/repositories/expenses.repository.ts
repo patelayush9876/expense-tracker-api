@@ -19,6 +19,7 @@ export class ExpensesRepository {
       limit = 10,
       search,
       categoryId,
+      creditCardId,
       startDate,
       endDate,
       sortBy,
@@ -39,6 +40,10 @@ export class ExpensesRepository {
 
     if (categoryId) {
       where.categoryId = categoryId;
+    }
+
+    if (creditCardId) {
+      where.creditCardId = creditCardId;
     }
 
     if (startDate || endDate) {

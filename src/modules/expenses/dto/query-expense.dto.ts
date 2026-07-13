@@ -17,4 +17,9 @@ export class QueryExpenseDto extends SearchDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID()
+  creditCardId?: string;
 }
