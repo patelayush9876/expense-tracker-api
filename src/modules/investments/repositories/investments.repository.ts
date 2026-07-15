@@ -43,7 +43,7 @@ export class InvestmentsRepository {
       [orderByKey]: sortOrder.toLowerCase() as Prisma.SortOrder,
     };
 
-    const [items, total] = await Promise.all([
+    const [items, total, sumAggregation, typeGroup] = await Promise.all([
       this.prisma.investment.findMany({
         where,
         skip,
@@ -51,11 +51,36 @@ export class InvestmentsRepository {
         orderBy,
       }),
       this.prisma.investment.count({ where }),
+      this.prisma.investment.aggregate({
+        where,
+        _sum: {
+          currentValue: true,
+          amountInvested: true,
+        },
+      }),
+      this.prisma.investment.groupBy({
+        by: ['type'],
+        where,
+        _sum: {
+          currentValue: true,
+        },
+      }),
     ]);
+
+    const totalCurrentValue = Number(sumAggregation._sum.currentValue || 0);
+    const totalAmountInvested = Number(sumAggregation._sum.amountInvested || 0);
+
+    const byType: Record<string, number> = {};
+    typeGroup.forEach((g) => {
+      byType[g.type] = Number(g._sum.currentValue || 0);
+    });
 
     return {
       items,
       total,
+      totalCurrentValue,
+      totalAmountInvested,
+      byType,
       page,
       limit,
       totalPages: Math.ceil(total / limit),

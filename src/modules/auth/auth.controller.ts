@@ -28,6 +28,12 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import type { User } from '@prisma/client';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none' as const,
+};
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -49,19 +55,12 @@ export class AuthController {
     const result = await this.authService.login(loginDto);
 
     res.cookie('access_token', result.accessToken, {
-      httpOnly: true,
-      secure: config.app.environment === 'development',
-      sameSite: config.app.environment === 'development' ? 'none' : 'lax',
-      // sameSite: config.app.environment === 'production' ? 'none' : 'lax',
-
+      ...cookieOptions,
       maxAge: parseDurationToMs(config.auth.accessTokenExpiry),
     });
 
     res.cookie('refresh_token', result.refreshToken, {
-      httpOnly: true,
-      secure: config.app.environment === 'development',
-      sameSite: config.app.environment === 'development' ? 'none' : 'lax',
-      // sameSite: config.app.environment === 'production' ? 'none' : 'lax',
+      ...cookieOptions,
       maxAge: parseDurationToMs(config.auth.refreshTokenExpiry),
     });
 
@@ -80,17 +79,8 @@ export class AuthController {
       await this.authService.logout(refreshToken);
     }
 
-    res.clearCookie('access_token', {
-      httpOnly: true,
-      secure: config.app.environment === 'production',
-      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
-    });
-
-    res.clearCookie('refresh_token', {
-      httpOnly: true,
-      secure: config.app.environment === 'production',
-      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
-    });
+    res.clearCookie('access_token', cookieOptions);
+    res.clearCookie('refresh_token', cookieOptions);
 
     return { success: true };
   }
@@ -110,16 +100,12 @@ export class AuthController {
     const result = await this.authService.refreshTokens(refreshToken);
 
     res.cookie('access_token', result.accessToken, {
-      httpOnly: true,
-      secure: config.app.environment === 'production',
-      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
+      ...cookieOptions,
       maxAge: parseDurationToMs(config.auth.accessTokenExpiry),
     });
 
     res.cookie('refresh_token', result.refreshToken, {
-      httpOnly: true,
-      secure: config.app.environment === 'production',
-      sameSite: config.app.environment === 'production' ? 'none' : 'lax',
+      ...cookieOptions,
       maxAge: parseDurationToMs(config.auth.refreshTokenExpiry),
     });
 

@@ -61,7 +61,7 @@ export class ExpensesRepository {
       [orderByKey]: sortOrder.toLowerCase() as Prisma.SortOrder,
     };
 
-    const [items, total] = await Promise.all([
+    const [items, total, sumAggregation] = await Promise.all([
       this.prisma.expense.findMany({
         where,
         skip,
@@ -70,11 +70,18 @@ export class ExpensesRepository {
         include: { category: true, creditCard: true },
       }),
       this.prisma.expense.count({ where }),
+      this.prisma.expense.aggregate({
+        where,
+        _sum: { amount: true },
+      }),
     ]);
+
+    const totalAmount = Number(sumAggregation._sum.amount || 0);
 
     return {
       items,
       total,
+      totalAmount,
       page,
       limit,
       totalPages: Math.ceil(total / limit),

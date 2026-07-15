@@ -56,7 +56,7 @@ export class IncomesRepository {
       [orderByKey]: sortOrder.toLowerCase() as Prisma.SortOrder,
     };
 
-    const [items, total] = await Promise.all([
+    const [items, total, sumAggregation, categoryGroup, categories] = await Promise.all([
       this.prisma.income.findMany({
         where,
         skip,
@@ -65,11 +65,34 @@ export class IncomesRepository {
         include: { category: true },
       }),
       this.prisma.income.count({ where }),
+      this.prisma.income.aggregate({
+        where,
+        _sum: { amount: true },
+      }),
+      this.prisma.income.groupBy({
+        by: ['categoryId'],
+        where,
+        _sum: { amount: true },
+      }),
+      this.prisma.incomeCategory.findMany({
+        where: { userId },
+      }),
     ]);
+
+    const totalAmount = Number(sumAggregation._sum.amount || 0);
+
+    const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
+    const byCategory: Record<string, number> = {};
+    categoryGroup.forEach((g) => {
+      const name = categoryMap.get(g.categoryId) || 'Other';
+      byCategory[name] = (byCategory[name] || 0) + Number(g._sum.amount || 0);
+    });
 
     return {
       items,
       total,
+      totalAmount,
+      byCategory,
       page,
       limit,
       totalPages: Math.ceil(total / limit),
